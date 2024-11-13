@@ -64,11 +64,9 @@ sudo ldconfig
 
 ## Configuring your project to use the crate
 
-To use the OpenFHE crate in your Rust project, add it as a dependency from [crates.io](https://crates.io/crates/openfhe):
-
-```bash
-cargo add openfhe
-```
+To use the OpenFHE crate in your Rust project, ~~add it as a dependency from [crates.io](https://crates.io/crates/openfhe)~~ 
+ add the following in `Cargo.toml` dependencies:
+openfhe = { git = "https://github.com/jacomoj/openfhe-rs.git" }
 
 You also need to add a small piece of code for the core dependencies' configuration in your `build.rs` file:
 
