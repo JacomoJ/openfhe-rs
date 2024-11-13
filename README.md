@@ -2,6 +2,8 @@
 
 ☀️ *OpenFHE-rs is a joint project by [FairMath](https://fairmath.xyz/) & [OpenFHE](https://www.openfhe.org/).*
 
+*(this fork implements the DiscreteGaussianSampler)*
+
 ---
 [![Discord](https://img.shields.io/discord/1163764915803279360?logo=discord&label=Fair%20Math)](https://discord.com/invite/NfhXwyr9M5)
 [![Twitter](https://img.shields.io/twitter/follow/FairMath)](https://twitter.com/FairMath)
