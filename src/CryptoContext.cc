@@ -1170,4 +1170,8 @@ std::unique_ptr<CryptoContextDCRTPoly> DCRTPolyGenNullCryptoContext()
     return std::make_unique<CryptoContextDCRTPoly>();
 }
 
+u_int32_t aaa() {
+    return 5;
+}
+
 } // openfhe

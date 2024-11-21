@@ -479,4 +479,5 @@ void DCRTPolyInsertEvalSumKey(const MapFromIndexToEvalKey& mapToInsert,
     const ParamsCKKSRNS& params);
 [[nodiscard]] std::unique_ptr<CryptoContextDCRTPoly> DCRTPolyGenNullCryptoContext();
 
+u_int32_t aaa();
 } // openfhe

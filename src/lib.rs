@@ -8,6 +8,7 @@ pub use cxx;
 #[cxx::bridge(namespace = "openfhe")]
 pub mod ffi
 {
+
     #[repr(i32)]
     enum COMPRESSION_LEVEL
     {
@@ -173,6 +174,7 @@ pub mod ffi
         include!("openfhe/src/SchemeBase.h");
         include!("openfhe/src/SequenceContainers.h");
         include!("openfhe/src/SerialDeserial.h");
+        include!("openfhe/src/DiscreteGaussianSampler.h");
 
         // enums
         type COMPRESSION_LEVEL;
@@ -222,6 +224,8 @@ pub mod ffi
         type VectorOfLWECiphertexts;
         type VectorOfPrivateKeys;
         type VectorOfVectorOfCiphertexts;
+        // DGS
+        type DiscreteGaussianSampler;
     }
 
     // CiphertextDCRTPoly
@@ -229,6 +233,7 @@ pub mod ffi
     {
         // Generator functions
         fn DCRTPolyGenNullCiphertext() -> UniquePtr<CiphertextDCRTPoly>;
+        fn aaa() -> u32;
     }
 
     // CryptoContextDCRTPoly
@@ -1126,11 +1131,20 @@ pub mod ffi
                                              privateKey: &PrivateKeyDCRTPoly,
                                              serialMode: SerialMode) -> bool;
     }
+
+    // Discrete Gaussian Sampler
+    unsafe extern "C++" {
+        fn Initialize(self: &DiscreteGaussianSampler);
+        fn GenerateInt(self: &DiscreteGaussianSampler) -> i32;
+        // fn GenerateIntVector(self: &DiscreteGaussianSampler) -> UniquePtr<CxxVector<i64>>;
+    }
 }
 
 #[cfg(test)]
 mod tests
 {
+    use ffi::aaa;
+
     use super::*;
 
     // TODO: add more tests
@@ -1451,5 +1465,12 @@ mod tests
         println!("{}\n", _plain_text_dec_2.GetString());
         println!(" Expected result: (3.4515092326, 5.3752765397, 4.8993108833, 3.2495023573, 4.0485229982)");
         print!("\n Evaluation time: {:.0?}\n", _time_eval_poly_2);
+    }
+
+    #[test]
+    fn DiscreteGaussianSampling() {
+        let k = aaa();
+        // let k = ffi::GenerateInt();
+        assert_ne!(0, k);
     }
 }

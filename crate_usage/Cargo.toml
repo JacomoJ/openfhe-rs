@@ -8,4 +8,4 @@ documentation = "https://github.com/fairmath/openfhe-rs/blob/master/README.md"
 repository = "https://github.com/fairmath/openfhe-rs"
 
 [dependencies]
-openfhe = "0.1.6"
+openfhe = { git = "https://github.com/fairmath/openfhe-rs.git" }
