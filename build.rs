@@ -18,6 +18,7 @@ fn main()
         .file("src/SchemeBase.cc")
         .file("src/SequenceContainers.cc")
         .file("src/SerialDeserial.cc")
+        .file("src/DiscreteGaussianSampler.cc")
         .include("/usr/local/include/openfhe")
         .include("/usr/local/include/openfhe/third-party/include")
         .include("/usr/local/include/openfhe/core")
@@ -75,6 +76,8 @@ fn main()
     println!("cargo::rerun-if-changed=src/SequenceContainers.cc");
     println!("cargo::rerun-if-changed=src/SerialDeserial.h");
     println!("cargo::rerun-if-changed=src/SerialDeserial.cc");
+    println!("cargo::rerun-if-changed=src/DiscreteGaussianSampler.h");
+    println!("cargo::rerun-if-changed=src/DiscreteGaussianSampler.cc");
 
     // linking openFHE
     println!("cargo::rustc-link-arg=-L/usr/local/lib");

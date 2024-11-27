@@ -9,6 +9,7 @@ pub use cxx;
 pub mod ffi
 {
 
+
     #[repr(i32)]
     enum COMPRESSION_LEVEL
     {
@@ -1134,6 +1135,7 @@ pub mod ffi
 
     // Discrete Gaussian Sampler
     unsafe extern "C++" {
+        fn GetSampler() -> UniquePtr<DiscreteGaussianSampler>;
         fn Initialize(self: &DiscreteGaussianSampler);
         fn GenerateInt(self: &DiscreteGaussianSampler) -> i32;
         // fn GenerateIntVector(self: &DiscreteGaussianSampler) -> UniquePtr<CxxVector<i64>>;
@@ -1143,7 +1145,6 @@ pub mod ffi
 #[cfg(test)]
 mod tests
 {
-    use ffi::aaa;
 
     use super::*;
 
@@ -1469,8 +1470,12 @@ mod tests
 
     #[test]
     fn DiscreteGaussianSampling() {
-        let k = aaa();
-        // let k = ffi::GenerateInt();
+        let _dg_sampler = ffi::GetSampler();
+        _dg_sampler.Initialize();
+        let k = _dg_sampler.GenerateInt();
+        println!("{k}");
+
+        let k = 1;
         assert_ne!(0, k);
     }
 }

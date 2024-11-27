@@ -20,4 +20,8 @@ namespace openfhe {
         // [[nodiscard]] std::shared_ptr<int64_t> GenerateIntVector(const uint32_t size) const;
         // [[nodiscard]] int32_t GenerateInteger() const;
     };
+
+    // Generator function
+    [[nodiscard]] std::unique_ptr<DiscreteGaussianSampler> GetSampler();
+
 }
