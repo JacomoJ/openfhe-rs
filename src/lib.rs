@@ -234,7 +234,6 @@ pub mod ffi
     {
         // Generator functions
         fn DCRTPolyGenNullCiphertext() -> UniquePtr<CiphertextDCRTPoly>;
-        fn aaa() -> u32;
     }
 
     // CryptoContextDCRTPoly
@@ -1137,6 +1136,7 @@ pub mod ffi
     unsafe extern "C++" {
         fn GetSampler() -> UniquePtr<DiscreteGaussianSampler>;
         fn Initialize(self: &DiscreteGaussianSampler);
+        // fn SetStd(self: &DiscreteGaussianSampler, std: f64);
         fn GenerateInt(self: &DiscreteGaussianSampler) -> i32;
         // fn GenerateIntVector(self: &DiscreteGaussianSampler) -> UniquePtr<CxxVector<i64>>;
     }
