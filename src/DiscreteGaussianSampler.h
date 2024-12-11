@@ -6,57 +6,57 @@
 #include "openfhe/core/lattice/hal/lat-backend.h"
 
 namespace openfhe {
-    using DiscreteGaussianGeneratorImpl = lbcrypto::DiscreteGaussianGeneratorImpl<lbcrypto::NativeInteger>;
+    using DiscreteGaussianGeneratorImpl = bigintdyn::DiscreteGaussianGeneratorGeneric;
     using BitGenerator = lbcrypto::BitGenerator;
-    using GetBaseSampler = lbcrypto::BaseSampler;
+    using BaseSampler = lbcrypto::BaseSampler;
     using BaseSamplerType = lbcrypto::BaseSamplerType;
 
-    class BitGenerator final {
+    class BitGeneratorPtr final {
         std::shared_ptr<BitGenerator> m_bitGenerator;
 
         public:
-            BitGenerator() = default;
-            BitGenerator(std::shared_ptr<BitGenerator>&& bitGenerator) noexcept;
-            BitGenerator(BitGenerator&) = delete;
-            BitGenerator(BitGenerator&&) = delete;
-            BitGenerator& operator=(const BitGenerator&) = delete;
-            BitGenerator& operator=(const BitGenerator&&) = delete;
+            BitGeneratorPtr() = default;
+            BitGeneratorPtr(std::shared_ptr<BitGenerator>&& bitGenerator) noexcept;
+            BitGeneratorPtr(const BitGeneratorPtr&) = delete;
+            BitGeneratorPtr(BitGeneratorPtr&&) = delete;
+            BitGeneratorPtr& operator=(const BitGeneratorPtr&) = delete;
+            BitGeneratorPtr& operator=(const BitGeneratorPtr&&) = delete;
 
             [[nodiscard]] const std::shared_ptr<BitGenerator>& GetRef() const noexcept;
-    }
+    };
 
-    class BaseSampler final {
+    class BaseSamplerPtr final {
         std::shared_ptr<BaseSampler> m_baseSampler;
 
         public:
-            BaseSampler() = default;
-            BaseSampler(std::shared_ptr<BaseSampler>&& baseSampler) noexcept;
-            BaseSampler(BaseSampler&) = delete;
-            BaseSampler(BaseSampler&&) = delete;
-            BaseSampler& operator=(const BaseSampler&) = delete;
-            BaseSampler& operator=(const BaseSampler&&) = delete;
-    }
+            BaseSamplerPtr() = default;
+            BaseSamplerPtr(std::shared_ptr<BaseSampler>&& baseSampler) noexcept;
+            BaseSamplerPtr(const BaseSamplerPtr&) = delete;
+            BaseSamplerPtr(BaseSamplerPtr&&) = delete;
+            BaseSamplerPtr& operator=(const BaseSamplerPtr&) = delete;
+            BaseSamplerPtr& operator=(const BaseSamplerPtr&&) = delete;
+    };
 
-    class DiscreteGaussianGeneratorGeneric final {
+    class DiscreteGaussianGeneratorPtr final {
         std::shared_ptr<DiscreteGaussianGeneratorImpl> m_discreteGaussianGeneratorGeneric;
 
         public:
-            DiscreteGaussianGeneratorGeneric() = default;
-            DiscreteGaussianGeneratorGeneric(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianGeneratorGeneric) noexcept;
-            DiscreteGaussianGeneratorGeneric(DiscreteGaussianGeneratorGeneric&) = delete;
-            DiscreteGaussianGeneratorGeneric(DiscreteGaussianGeneratorGeneric&&) = delete;
-            DiscreteGaussianGeneratorGeneric& operator=(const DiscreteGaussianGeneratorGeneric&) = delete;
-            DiscreteGaussianGeneratorGeneric& operator=(const DiscreteGaussianGeneratorGeneric&&) = delete;
+            DiscreteGaussianGeneratorPtr() = default;
+            DiscreteGaussianGeneratorPtr(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianGeneratorGeneric) noexcept;
+            DiscreteGaussianGeneratorPtr(const DiscreteGaussianGeneratorPtr&) = delete;
+            DiscreteGaussianGeneratorPtr(DiscreteGaussianGeneratorPtr&&) = delete;
+            DiscreteGaussianGeneratorPtr& operator=(const DiscreteGaussianGeneratorPtr&) = delete;
+            DiscreteGaussianGeneratorPtr& operator=(const DiscreteGaussianGeneratorPtr&&) = delete;
 
-            [[nodiscard]] int64_t GenerateInteger(const double center, const double std);
-    }
+            [[nodiscard]] int64_t GenerateInteger(const double center, const double std) const;
+    };
 
     // Generator functions
-    [[nodiscard]] std::unique_ptr<BitGenerator> GetBitGenerator();
+    [[nodiscard]] std::unique_ptr<BitGeneratorPtr> GetBitGenerator();
 
-    [[nodiscard]] std::unique_ptr<BaseSampler> GetBaseSampler();
-    [[nodiscard]] std::unique_ptr<BaseSampler> GetBaseSamplerWithParams(const double center, const double std, const BitGenerator& bitGenerator, const BaseSamplerType);
+    [[nodiscard]] std::unique_ptr<BaseSamplerPtr> GetBaseSampler();
+    // [[nodiscard]] std::unique_ptr<BaseSamplerPtr> GetBaseSamplerWithParams(const double center, const double std, const BitGeneratorPtr& bitGenerator, const BaseSamplerType);
 
-    [[nodiscard]] std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGenerator();
-    std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGeneratorWithParams(const BaseSampler** samplers, const double std, const uint32_t b, const double N);
+    [[nodiscard]] std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGenerator();
+    // std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGeneratorWithParams( (* const BaseSampler samplers), const double std, const uint32_t b, const double N);
 } // openfhe

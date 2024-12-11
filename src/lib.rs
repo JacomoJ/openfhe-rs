@@ -149,6 +149,13 @@ pub mod ffi
         JSON = 1,
     }
 
+    // Discrete Gaussian Sampler
+    #[repr(i32)]
+    enum BaseSamplerType { 
+        KNUTH_YAO = 0, 
+        PEIKERT = 1,
+    }    
+
     struct ComplexPair
     {
         re: f64,
@@ -194,6 +201,7 @@ pub mod ffi
         type SecretKeyDist;
         type SecurityLevel;
         type SerialMode;
+        type BaseSamplerType;
 
         // types
         type CiphertextDCRTPoly;
@@ -225,8 +233,6 @@ pub mod ffi
         type VectorOfLWECiphertexts;
         type VectorOfPrivateKeys;
         type VectorOfVectorOfCiphertexts;
-        // DGS
-        type DiscreteGaussianSampler;
     }
 
     // CiphertextDCRTPoly
@@ -1134,11 +1140,21 @@ pub mod ffi
 
     // Discrete Gaussian Sampler
     unsafe extern "C++" {
-        fn GetSampler() -> UniquePtr<DiscreteGaussianSampler>;
-        fn Initialize(self: &DiscreteGaussianSampler);
-        // fn SetStd(self: &DiscreteGaussianSampler, std: f64);
-        fn GenerateInt(self: &DiscreteGaussianSampler) -> i32;
-        // fn GenerateIntVector(self: &DiscreteGaussianSampler) -> UniquePtr<CxxVector<i64>>;
+        // types
+        type BitGeneratorPtr;
+        type BaseSamplerPtr;
+        type DiscreteGaussianGeneratorPtr;
+
+        // Generator functions
+        fn GetBitGenerator() -> UniquePtr<BitGeneratorPtr>;
+        
+        fn GetBaseSampler() -> UniquePtr<BaseSamplerPtr>;
+        // fn GetBaseSamplerWithParams(center: f64, std: f64, bitGenerator: &BitGeneratorPtr, bst: BaseSamplerType) -> UniquePtr<BaseSamplerPtr>;
+
+        fn GetGenerator() -> UniquePtr<DiscreteGaussianGeneratorPtr>;
+        // unsafe fn GetGeneratorWithParams(samplers: BaseSamplerPtr, std: f64, b: u32, N: f64) -> UniquePtr<DiscreteGaussianGeneratorPtr>;
+
+        fn GenerateInteger(self: &DiscreteGaussianGeneratorPtr, center: f64, std: f64) -> i64;
     }
 }
 
@@ -1147,6 +1163,26 @@ mod tests
 {
 
     use super::*;
+
+    #[test]
+    fn DiscreteGaussianSampling() {
+        let stdBase:f64 = 34.0;
+        let std: f64 = (1 << 22) as f64;
+        let CENTER_COUNT = 1024;
+
+        let mut _bg = ffi::GetBitGenerator();
+        let count: usize = 1000;
+        let SMOOTHING_PARAMAETER: f64 = 6.0;
+
+        let _base_samplers = CxxVector::<BaseSamplerPtr>::new();
+
+        // for i in range(0..CENTER_COUNT) {
+        //     let center = (i as f64) / (CENTER_COUNT as f64);
+        //     _base_samplers.pin_mut().push(ffi::GetBaseSampler(center, stdBase, m_bg.GetRef(), ffi::BaseSamplerType::PEIKERT));
+        // }
+
+
+    }
 
     // TODO: add more tests
     #[test]
@@ -1466,16 +1502,5 @@ mod tests
         println!("{}\n", _plain_text_dec_2.GetString());
         println!(" Expected result: (3.4515092326, 5.3752765397, 4.8993108833, 3.2495023573, 4.0485229982)");
         print!("\n Evaluation time: {:.0?}\n", _time_eval_poly_2);
-    }
-
-    #[test]
-    fn DiscreteGaussianSampling() {
-        let _dg_sampler = ffi::GetSampler();
-        _dg_sampler.Initialize();
-        let k = _dg_sampler.GenerateInt();
-        println!("{k}");
-
-        let k = 1;
-        assert_ne!(0, k);
     }
 }
