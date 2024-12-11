@@ -9,7 +9,8 @@ namespace openfhe {
     using DiscreteGaussianGeneratorImpl = lbcrypto::DiscreteGaussianGeneratorImpl<lbcrypto::NativeInteger>;
     using BitGenerator = lbcrypto::BitGenerator;
     using GetBaseSampler = lbcrypto::BaseSampler;
-    using 
+    using BaseSamplerType = lbcrypto::BaseSamplerType;
+
     class BitGenerator final {
         std::shared_ptr<BitGenerator> m_bitGenerator;
 
@@ -22,7 +23,6 @@ namespace openfhe {
             BitGenerator& operator=(const BitGenerator&&) = delete;
 
             [[nodiscard]] const std::shared_ptr<BitGenerator>& GetRef() const noexcept;
-
     }
 
     class BaseSampler final {
@@ -38,43 +38,25 @@ namespace openfhe {
     }
 
     class DiscreteGaussianGeneratorGeneric final {
-        std::shared_ptr<DiscreteGaussianGeneratorGeneric> m_discreteGaussianGeneratorGeneric;
+        std::shared_ptr<DiscreteGaussianGeneratorImpl> m_discreteGaussianGeneratorGeneric;
 
         public:
             DiscreteGaussianGeneratorGeneric() = default;
-            DiscreteGaussianGeneratorGeneric(std::shared_ptr<DiscreteGaussianGeneratorGeneric>&& discreteGaussianGeneratorGeneric) noexcept;
+            DiscreteGaussianGeneratorGeneric(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianGeneratorGeneric) noexcept;
             DiscreteGaussianGeneratorGeneric(DiscreteGaussianGeneratorGeneric&) = delete;
             DiscreteGaussianGeneratorGeneric(DiscreteGaussianGeneratorGeneric&&) = delete;
             DiscreteGaussianGeneratorGeneric& operator=(const DiscreteGaussianGeneratorGeneric&) = delete;
             DiscreteGaussianGeneratorGeneric& operator=(const DiscreteGaussianGeneratorGeneric&&) = delete;
+
+            [[nodiscard]] int64_t GenerateInteger(const double center, const double std);
     }
 
-    // class DiscreteGaussianSampler final {
-    //     std::shared_ptr<DiscreteGaussianGeneratorImpl> m_discreteGaussianGenerator;
-        
-    // public:
-    //     DiscreteGaussianSampler() = default;
-    //     DiscreteGaussianSampler(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianSampler) noexcept;
-    //     DiscreteGaussianSampler(DiscreteGaussianSampler&) = delete;
-    //     DiscreteGaussianSampler(DiscreteGaussianSampler&&) = delete;
-    //     DiscreteGaussianSampler& operator=(const DiscreteGaussianSampler&) = delete;
-    //     DiscreteGaussianSampler& operator=(const DiscreteGaussianSampler&&) = delete;
-
-    //     [[nodiscard]] const std::shared_ptr<DiscreteGaussianSampler>& GetRef() const noexcept;
-    //     // [[nodiscard]] std::shared_ptr<DiscreteGaussianSampler>& GetRef() const noexcept;
-
-    //     void Initialize() const;
-    //     void SetStd(const double std);
-    //     int32_t GenerateInt() const;
-    //     // [[nodiscard]] std::shared_ptr<int64_t> GenerateIntVector(const uint32_t size) const;
-    //     // [[nodiscard]] int32_t GenerateInteger() const;
-    // };
-
-    // Generator function
-    // [[nodiscard]] std::unique_ptr<DiscreteGaussianSampler> GetSampler();
-    // [[nodiscard]] std::unique_ptr<DiscreteGaussianSampler> GetSamplerWithStd(double std);
-
+    // Generator functions
     [[nodiscard]] std::unique_ptr<BitGenerator> GetBitGenerator();
+
     [[nodiscard]] std::unique_ptr<BaseSampler> GetBaseSampler();
+    [[nodiscard]] std::unique_ptr<BaseSampler> GetBaseSamplerWithParams(const double center, const double std, const BitGenerator& bitGenerator, const BaseSamplerType);
+
     [[nodiscard]] std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGenerator();
+    std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGeneratorWithParams(const BaseSampler** samplers, const double std, const uint32_t b, const double N);
 } // openfhe
