@@ -10,6 +10,7 @@ pub mod ffi
 {
 
 
+
     #[repr(i32)]
     enum COMPRESSION_LEVEL
     {
@@ -1142,19 +1143,24 @@ pub mod ffi
     unsafe extern "C++" {
         // types
         type BitGeneratorPtr;
-        type BaseSamplerPtr;
+        type BitGenerator;
+        // type BaseSamplerPtr;
+        type BaseSampler;
         type DiscreteGaussianGeneratorPtr;
 
         // Generator functions
-        fn GetBitGenerator() -> UniquePtr<BitGeneratorPtr>;
+        // fn GetBitGenerator() -> UniquePtr<BitGeneratorPtr>;
+        fn GetBitGenerator() -> UniquePtr<BitGenerator>;
         
-        fn GetBaseSampler() -> UniquePtr<BaseSamplerPtr>;
-        // fn GetBaseSamplerWithParams(center: f64, std: f64, bitGenerator: &BitGeneratorPtr, bst: BaseSamplerType) -> UniquePtr<BaseSamplerPtr>;
+        // fn GetBaseSampler() -> UniquePtr<BaseSampler>;
+        unsafe fn GetBaseSamplerWithParams(center: f64, std: f64, bitGenerator: *mut BitGenerator, bst: BaseSamplerType) -> UniquePtr<BaseSampler>;
 
         fn GetGenerator() -> UniquePtr<DiscreteGaussianGeneratorPtr>;
         // unsafe fn GetGeneratorWithParams(samplers: BaseSamplerPtr, std: f64, b: u32, N: f64) -> UniquePtr<DiscreteGaussianGeneratorPtr>;
 
-        fn GenerateInteger(self: &DiscreteGaussianGeneratorPtr, center: f64, std: f64) -> i64;
+        // Generate integers
+        fn GenerateInteger(self: Pin<&mut BaseSampler>) -> i64;
+        // fn GenerateInteger(self: &DiscreteGaussianGeneratorPtr, center: f64, std: f64) -> i64;
     }
 }
 
@@ -1173,14 +1179,17 @@ mod tests
         let mut _bg = ffi::GetBitGenerator();
         let count: usize = 1000;
         let SMOOTHING_PARAMAETER: f64 = 6.0;
+        unsafe {
+            let mut _base_sample = ffi::GetBaseSamplerWithParams(0.0, stdBase, _bg.into_raw(), ffi::BaseSamplerType::PEIKERT);
+        
+            // let _base_samplers = CxxVector::<BaseSamplerPtr>::new();
 
-        let _base_samplers = CxxVector::<BaseSamplerPtr>::new();
-
-        // for i in range(0..CENTER_COUNT) {
-        //     let center = (i as f64) / (CENTER_COUNT as f64);
-        //     _base_samplers.pin_mut().push(ffi::GetBaseSampler(center, stdBase, m_bg.GetRef(), ffi::BaseSamplerType::PEIKERT));
-        // }
-
+            for _i in 0..CENTER_COUNT {
+                println!("{:?}", _base_sample.pin_mut().GenerateInteger());
+                // let center = (i as f64) / (CENTER_COUNT as f64);
+                // _base_samplers.pin_mut().push(ffi::GetBaseSampler(center, stdBase, m_bg.GetRef(), ffi::BaseSamplerType::PEIKERT));
+            }
+        }
 
     }
 
