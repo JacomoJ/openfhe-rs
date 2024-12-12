@@ -22,18 +22,18 @@ namespace openfhe {
     //     return m_baseSampler -> GenerateInteger();
     // }
 
-    DiscreteGaussianGeneratorPtr::DiscreteGaussianGeneratorPtr(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianSampler) noexcept 
-        : m_discreteGaussianGeneratorGeneric(std::move(discreteGaussianSampler))
-    { }
+    // DiscreteGaussianGeneratorPtr::DiscreteGaussianGeneratorPtr(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianSampler) noexcept 
+    //     : m_discreteGaussianGeneratorGeneric(std::move(discreteGaussianSampler))
+    // { }
 
     // GetRefs
     const std::shared_ptr<BitGenerator>& BitGeneratorPtr::GetRef() const noexcept {
         return m_bitGenerator;
     }
 
-    int64_t DiscreteGaussianGeneratorPtr::GenerateInteger(const double center, const double std) const {
-        return m_discreteGaussianGeneratorGeneric -> GenerateInteger(center, std);
-    }
+    // int64_t DiscreteGaussianGeneratorPtr::GenerateInteger(const double center, const double std) const {
+    //     return m_discreteGaussianGeneratorGeneric -> GenerateInteger(center, std);
+    // }
 
     // Generator functions
     // std::unique_ptr<BitGeneratorPtr> GetBitGenerator() {
@@ -69,11 +69,20 @@ namespace openfhe {
         return std::make_unique<BaseSampler>(center, std, bitGenerator, type);
     }
 
+    std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGeneratorWithParams(
+        BaseSampler* samplers, 
+        const double std, 
+        const int64_t b, 
+        const double N) 
+    {
+        return std::unique_ptr<DiscreteGaussianGeneratorGeneric>();
+    }
+
     // std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGeneratorWithParams(const* BaseSampler samplers, const double std, const uint32_t b, const double N) {
     //     return std::make_unique<DiscreteGaussianGeneratorPtr>(samplers, std, b, N);
     // }
 
-    std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGaussianGenerator() {
-        return std::make_unique<DiscreteGaussianGeneratorPtr>();
-    }
+    // std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGaussianGenerator() {
+    //     return std::make_unique<DiscreteGaussianGeneratorPtr>();
+    // }
 }

@@ -6,7 +6,7 @@
 #include "openfhe/core/lattice/hal/lat-backend.h"
 
 namespace openfhe {
-    using DiscreteGaussianGeneratorImpl = bigintdyn::DiscreteGaussianGeneratorGeneric;
+    using DiscreteGaussianGeneratorGeneric = bigintdyn::DiscreteGaussianGeneratorGeneric;
     using BitGenerator = lbcrypto::BitGenerator;
     using BaseSampler = lbcrypto::BaseSampler;
     using BaseSamplerType = lbcrypto::BaseSamplerType;
@@ -40,19 +40,19 @@ namespace openfhe {
     //         [[nodiscard]] int64_t BaseSamplerGenerateInteger() const; 
     // };
 
-    class DiscreteGaussianGeneratorPtr final {
-        std::shared_ptr<DiscreteGaussianGeneratorImpl> m_discreteGaussianGeneratorGeneric;
+    // class DiscreteGaussianGeneratorPtr final {
+    //     std::shared_ptr<DiscreteGaussianGeneratorImpl> m_discreteGaussianGeneratorGeneric;
 
-        public:
-            DiscreteGaussianGeneratorPtr() = default;
-            DiscreteGaussianGeneratorPtr(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianGeneratorGeneric) noexcept;
-            DiscreteGaussianGeneratorPtr(const DiscreteGaussianGeneratorPtr&) = delete;
-            DiscreteGaussianGeneratorPtr(DiscreteGaussianGeneratorPtr&&) = delete;
-            DiscreteGaussianGeneratorPtr& operator=(const DiscreteGaussianGeneratorPtr&) = delete;
-            DiscreteGaussianGeneratorPtr& operator=(const DiscreteGaussianGeneratorPtr&&) = delete;
+    //     public:
+    //         DiscreteGaussianGeneratorPtr() = default;
+    //         DiscreteGaussianGeneratorPtr(std::shared_ptr<DiscreteGaussianGeneratorImpl>&& discreteGaussianGeneratorGeneric) noexcept;
+    //         DiscreteGaussianGeneratorPtr(const DiscreteGaussianGeneratorPtr&) = delete;
+    //         DiscreteGaussianGeneratorPtr(DiscreteGaussianGeneratorPtr&&) = delete;
+    //         DiscreteGaussianGeneratorPtr& operator=(const DiscreteGaussianGeneratorPtr&) = delete;
+    //         DiscreteGaussianGeneratorPtr& operator=(const DiscreteGaussianGeneratorPtr&&) = delete;
 
-            [[nodiscard]] int64_t GenerateInteger(const double center, const double std) const;
-    };
+    //         [[nodiscard]] int64_t GenerateInteger(const double center, const double std) const;
+    // };
 
     // Generator functions
     // [[nodiscard]] std::unique_ptr<BitGeneratorPtr> GetBitGenerator();
@@ -63,6 +63,6 @@ namespace openfhe {
     // [[nodiscard]] std::unique_ptr<BaseSampler> GetBaseSamplerWithParams(const double center, const double std, const BitGeneratorPtr& bitGenerator, const BaseSamplerType type);
     [[nodiscard]] std::unique_ptr<BaseSampler> GetBaseSamplerWithParams(const double center, const double std, BitGenerator* bitGenerator, const BaseSamplerType type);
 
-    [[nodiscard]] std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGenerator();
-    // std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGeneratorWithParams( (* const BaseSampler samplers), const double std, const uint32_t b, const double N);
+    // [[nodiscard]] std::unique_ptr<DiscreteGaussianGeneratorPtr> GetGenerator();
+    [[nodiscard]] std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGeneratorWithParams(BaseSampler* samplers, const double std, const int64_t b, const double N);
 } // openfhe
