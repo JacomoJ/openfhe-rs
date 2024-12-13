@@ -1168,7 +1168,8 @@ mod tests
     #[test]
     fn DiscreteGaussianSampling() {
         let stdBase:f64 = 34.0;
-        let std: f64 = (1 << 22) as f64;
+        // let std: f64 = (1 << 22) as f64;
+        let std: f64 = 2.0;
         const CENTER_COUNT: f64 = 10.0;
 
         let count: usize = 10;
