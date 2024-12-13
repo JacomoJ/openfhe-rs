@@ -1142,7 +1142,6 @@ pub mod ffi
     // Discrete Gaussian Sampler
     unsafe extern "C++" {
         // types
-        type BitGeneratorPtr;
         type BitGenerator;
         type BaseSampler;
         type DiscreteGaussianGeneratorGeneric;
@@ -1150,7 +1149,7 @@ pub mod ffi
         // Generator functions
         fn GetBitGenerator() -> UniquePtr<BitGenerator>;
         unsafe fn GetBaseSamplerWithParams(center: f64, std: f64, bitGenerator: *mut BitGenerator, bst: BaseSamplerType) -> UniquePtr<BaseSampler>;
-        unsafe fn GetGeneratorWithParams(samplers: *mut BaseSampler, std: f64, b: i64, N: f64) -> UniquePtr<DiscreteGaussianGeneratorGeneric>;
+        unsafe fn GetGeneratorWithParams(samplers: *mut *mut BaseSampler, std: f64, b: i64, N: f64) -> UniquePtr<DiscreteGaussianGeneratorGeneric>;
 
         // Generate integers
         fn GenerateInteger(self: Pin<&mut BaseSampler>) -> i64;
@@ -1162,7 +1161,7 @@ pub mod ffi
 mod tests
 {
 
-    use ffi::DiscreteGaussianGeneratorGeneric;
+    use ffi::{BaseSampler, DiscreteGaussianGeneratorGeneric};
 
     use super::*;
 
@@ -1170,26 +1169,34 @@ mod tests
     fn DiscreteGaussianSampling() {
         let stdBase:f64 = 34.0;
         let std: f64 = (1 << 22) as f64;
-        let CENTER_COUNT: f64 = 1024.0;
+        const CENTER_COUNT: f64 = 10.0;
 
-        let mut _bg = ffi::GetBitGenerator();
-        let count: usize = 1000;
+        let count: usize = 10;
         let SMOOTHING_PARAMAETER: f64 = 6.0;
-        unsafe {
-            // let mut _base_sample = ffi::GetBaseSamplerWithParams(0.0, stdBase, _bg.into_raw(), ffi::BaseSamplerType::PEIKERT);
         
-            // TODO: use no CxxVector, but instantiare an array of pointers [*mut BaseSampler; CENTER_COUNT] and fill it up
-            let _base_samplers = CxxVector::<*mut ffi::BaseSampler>::new();
-
+        unsafe {
+            let mut _base_samplers: Vec<*mut BaseSampler> = Vec::with_capacity(CENTER_COUNT as usize);
+            
             for i in 0..(CENTER_COUNT as usize) {
-                // println!("{:?}", _base_sample.pin_mut().GenerateInteger());
                 let center: f64 = i as f64 / CENTER_COUNT;
-                _base_samplers.pin_mut().push(ffi::GetBaseSamplerWithParams(center, stdBase, _bg.into_raw(), ffi::BaseSamplerType::PEIKERT).into_raw());
+                let mut _bg = ffi::GetBitGenerator();
+                let _new_sampler = ffi::GetBaseSamplerWithParams(center, stdBase, _bg.into_raw(), ffi::BaseSamplerType::PEIKERT);
+
+                _base_samplers.push(_new_sampler.into_raw());
             }
 
+            let _base_samplers: *mut *mut BaseSampler = _base_samplers.as_mut_ptr();
             let two = 2_f64;
             let base = (CENTER_COUNT.ln() / two.ln()) as i64;
-            let dgg = ffi::GetGeneratorWithParams(_base_samplers.as_slice(), stdBase, base, SMOOTHING_PARAMAETER);
+            let mut _dgg = ffi::GetGeneratorWithParams(_base_samplers, stdBase, base, SMOOTHING_PARAMAETER);
+
+            for i in 0..(CENTER_COUNT as usize) {
+                let center: f64 = i as f64 / CENTER_COUNT;
+                for _ in 0..count {
+                    let n = _dgg.pin_mut().GenerateInteger(center, std);
+                    println!("{n:?}");
+                }
+            }
         }
 
     }
