@@ -11,6 +11,7 @@ pub mod ffi
 
 
 
+
     #[repr(i32)]
     enum COMPRESSION_LEVEL
     {
@@ -1145,15 +1146,23 @@ pub mod ffi
         type BitGenerator;
         type BaseSampler;
         type DiscreteGaussianGeneratorGeneric;
+        type DiscreteGaussianGeneratorImpl;
+        type DiscreteGaussianPtr;
 
         // Generator functions
+        // Generic DGS that can use different sampling method
         fn GetBitGenerator() -> UniquePtr<BitGenerator>;
         unsafe fn GetBaseSamplerWithParams(center: f64, std: f64, bitGenerator: *mut BitGenerator, bst: BaseSamplerType) -> UniquePtr<BaseSampler>;
-        unsafe fn GetGeneratorWithParams(samplers: *mut *mut BaseSampler, std: f64, b: i64, N: f64) -> UniquePtr<DiscreteGaussianGeneratorGeneric>;
-
-        // Generate integers
         fn GenerateInteger(self: Pin<&mut BaseSampler>) -> i64;
+        unsafe fn GetGeneratorGenericWithParams(samplers: *mut *mut BaseSampler, std: f64, b: i64, N: f64) -> UniquePtr<DiscreteGaussianGeneratorGeneric>;
         fn GenerateInteger(self: Pin<&mut DiscreteGaussianGeneratorGeneric>, center: f64, std: f64) -> i64;
+
+        // Simple DSG using Peikert's method, can sample integers just by passing std_dev
+        unsafe fn GetGeneratorWithParams(std: f64) -> UniquePtr<DiscreteGaussianGeneratorImpl>;
+        // fn GenerateVector(self: Pin<&mut DiscreteGaussianGeneratorImpl>, size: u32, modulus: u32) -> i32; // does not work because of the type conversion
+        // fn GenerateIntVector(self: Pin<&mut DiscreteGaussianGeneratorImpl>, size: u32, modulus: u32) -> &i64; 
+        // unsafe fn GenerateInt(self: Pin<&mut DiscreteGaussianGeneratorImpl>) -> i32; 
+        fn GenerateInt(self: &DiscreteGaussianGeneratorImpl) -> i32;
     }
 }
 
@@ -1164,6 +1173,21 @@ mod tests
     use ffi::{BaseSampler, DiscreteGaussianGeneratorGeneric};
 
     use super::*;
+
+    #[test]
+    fn DiscreteGaussianSamplingSimple() {
+        let std_dev = 1.0;
+        // let modulus: u32 = 101;
+        // let size: u32 = 100;
+
+        unsafe {
+            let mut _sampler = ffi::GetGeneratorWithParams(std_dev);
+            for _ in 0..100 {
+                let n = _sampler.GenerateInt();
+                println!("{n:?}");
+            }
+        }
+    }
 
     #[test]
     fn DiscreteGaussianSampling() {
@@ -1189,7 +1213,7 @@ mod tests
             let _base_samplers: *mut *mut BaseSampler = _base_samplers.as_mut_ptr();
             let two = 2_f64;
             let base = (CENTER_COUNT.ln() / two.ln()) as i64;
-            let mut _dgg = ffi::GetGeneratorWithParams(_base_samplers, stdBase, base, SMOOTHING_PARAMAETER);
+            let mut _dgg = ffi::GetGeneratorGenericWithParams(_base_samplers, stdBase, base, SMOOTHING_PARAMAETER);
 
             for i in 0..(CENTER_COUNT as usize) {
                 let center: f64 = i as f64 / CENTER_COUNT;

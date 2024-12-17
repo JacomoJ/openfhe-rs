@@ -1,13 +1,15 @@
 #include "DiscreteGaussianSampler.h"
 
-#include "openfhe/core/math/discretegaussiangenerator-impl.h"
-
 #include "openfhe/src/lib.rs.h"
 
 namespace openfhe {
     // initializations
     BitGeneratorPtr::BitGeneratorPtr(std::shared_ptr<BitGenerator>&& bitGenerator) noexcept 
         : m_bitGenerator(std::move(bitGenerator))
+    { }
+
+    DiscreteGaussianPtr::DiscreteGaussianPtr(std::shared_ptr<DiscreteGaussianGeneratorImpl>&&    discreteGaussianSampler) noexcept 
+        : m_discreteGaussianGenerator(std::move(discreteGaussianSampler))
     { }
 
     // GetRefs
@@ -28,8 +30,18 @@ namespace openfhe {
     {
         return std::make_unique<BaseSampler>(center, std, bitGenerator, type);
     }
+    
+    // TODO: create one with std
+    std::unique_ptr<DiscreteGaussianGeneratorImpl> GetGeneratorWithParams(const double std) {
+        return std::make_unique<DiscreteGaussianGeneratorImpl>(std);
+    }
 
-    std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGeneratorWithParams(
+    // int32_t DiscreteGaussianPtr::GenerateInt() const noexcept {
+    //     return m_discreteGaussianGenerator -> GenerateInt();
+    // }
+
+
+    std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGeneratorGenericWithParams(
         BaseSampler** samplers, 
         const double std, 
         const int64_t b, 
