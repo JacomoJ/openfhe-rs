@@ -8,10 +8,6 @@ namespace openfhe {
         : m_bitGenerator(std::move(bitGenerator))
     { }
 
-    DiscreteGaussianPtr::DiscreteGaussianPtr(std::shared_ptr<DiscreteGaussianGeneratorImpl>&&    discreteGaussianSampler) noexcept 
-        : m_discreteGaussianGenerator(std::move(discreteGaussianSampler))
-    { }
-
     // GetRefs
     const std::shared_ptr<BitGenerator>& BitGeneratorPtr::GetRef() const noexcept {
         return m_bitGenerator;
@@ -31,15 +27,9 @@ namespace openfhe {
         return std::make_unique<BaseSampler>(center, std, bitGenerator, type);
     }
     
-    // TODO: create one with std
     std::unique_ptr<DiscreteGaussianGeneratorImpl> GetGeneratorWithParams(const double std) {
         return std::make_unique<DiscreteGaussianGeneratorImpl>(std);
     }
-
-    // int32_t DiscreteGaussianPtr::GenerateInt() const noexcept {
-    //     return m_discreteGaussianGenerator -> GenerateInt();
-    // }
-
 
     std::unique_ptr<DiscreteGaussianGeneratorGeneric> GetGeneratorGenericWithParams(
         BaseSampler** samplers, 

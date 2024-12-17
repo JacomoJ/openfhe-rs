@@ -1147,9 +1147,7 @@ pub mod ffi
         type BaseSampler;
         type DiscreteGaussianGeneratorGeneric;
         type DiscreteGaussianGeneratorImpl;
-        type DiscreteGaussianPtr;
-
-        // Generator functions
+        
         // Generic DGS that can use different sampling method
         fn GetBitGenerator() -> UniquePtr<BitGenerator>;
         unsafe fn GetBaseSamplerWithParams(center: f64, std: f64, bitGenerator: *mut BitGenerator, bst: BaseSamplerType) -> UniquePtr<BaseSampler>;
@@ -1159,9 +1157,7 @@ pub mod ffi
 
         // Simple DSG using Peikert's method, can sample integers just by passing std_dev
         unsafe fn GetGeneratorWithParams(std: f64) -> UniquePtr<DiscreteGaussianGeneratorImpl>;
-        // fn GenerateVector(self: Pin<&mut DiscreteGaussianGeneratorImpl>, size: u32, modulus: u32) -> i32; // does not work because of the type conversion
-        // fn GenerateIntVector(self: Pin<&mut DiscreteGaussianGeneratorImpl>, size: u32, modulus: u32) -> &i64; 
-        // unsafe fn GenerateInt(self: Pin<&mut DiscreteGaussianGeneratorImpl>) -> i32; 
+        // cannot use Pin<>: use it only if the function is not const, otherwise just pass by reference
         fn GenerateInt(self: &DiscreteGaussianGeneratorImpl) -> i32;
     }
 }
